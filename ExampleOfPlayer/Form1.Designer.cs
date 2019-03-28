@@ -61,7 +61,7 @@
             // 
             // Browse
             // 
-            this.Browse.Location = new System.Drawing.Point(569, 229);
+            this.Browse.Location = new System.Drawing.Point(651, 277);
             this.Browse.Name = "Browse";
             this.Browse.Size = new System.Drawing.Size(86, 23);
             this.Browse.TabIndex = 0;
@@ -71,7 +71,7 @@
             // 
             // Playbutton
             // 
-            this.Playbutton.Location = new System.Drawing.Point(12, 340);
+            this.Playbutton.Location = new System.Drawing.Point(12, 378);
             this.Playbutton.Name = "Playbutton";
             this.Playbutton.Size = new System.Drawing.Size(82, 56);
             this.Playbutton.TabIndex = 1;
@@ -81,7 +81,7 @@
             // 
             // Stopbutton
             // 
-            this.Stopbutton.Location = new System.Drawing.Point(156, 353);
+            this.Stopbutton.Location = new System.Drawing.Point(156, 391);
             this.Stopbutton.Name = "Stopbutton";
             this.Stopbutton.Size = new System.Drawing.Size(50, 31);
             this.Stopbutton.TabIndex = 2;
@@ -93,9 +93,9 @@
             // 
             this.PlayList.AllowDrop = true;
             this.PlayList.FormattingEnabled = true;
-            this.PlayList.Location = new System.Drawing.Point(322, 11);
+            this.PlayList.Location = new System.Drawing.Point(348, 24);
             this.PlayList.Name = "PlayList";
-            this.PlayList.Size = new System.Drawing.Size(333, 212);
+            this.PlayList.Size = new System.Drawing.Size(389, 238);
             this.PlayList.TabIndex = 3;
             this.PlayList.DragDrop += new System.Windows.Forms.DragEventHandler(this.PlayList_DragDrop);
             this.PlayList.DragEnter += new System.Windows.Forms.DragEventHandler(this.PlayList_DragEnter);
@@ -103,7 +103,7 @@
             // 
             // Settings
             // 
-            this.Settings.Location = new System.Drawing.Point(322, 229);
+            this.Settings.Location = new System.Drawing.Point(348, 277);
             this.Settings.Name = "Settings";
             this.Settings.Size = new System.Drawing.Size(75, 23);
             this.Settings.TabIndex = 4;
@@ -113,7 +113,7 @@
             // 
             // Pausebutton
             // 
-            this.Pausebutton.Location = new System.Drawing.Point(100, 353);
+            this.Pausebutton.Location = new System.Drawing.Point(100, 391);
             this.Pausebutton.Name = "Pausebutton";
             this.Pausebutton.Size = new System.Drawing.Size(50, 31);
             this.Pausebutton.TabIndex = 5;
@@ -123,7 +123,7 @@
             // 
             // TimePosition
             // 
-            this.TimePosition.Location = new System.Drawing.Point(64, 289);
+            this.TimePosition.Location = new System.Drawing.Point(64, 327);
             this.TimePosition.Name = "TimePosition";
             this.TimePosition.Size = new System.Drawing.Size(460, 45);
             this.TimePosition.TabIndex = 6;
@@ -135,7 +135,7 @@
             // RepeatBut
             // 
             this.RepeatBut.AutoSize = true;
-            this.RepeatBut.Location = new System.Drawing.Point(704, 340);
+            this.RepeatBut.Location = new System.Drawing.Point(704, 378);
             this.RepeatBut.Name = "RepeatBut";
             this.RepeatBut.Size = new System.Drawing.Size(61, 17);
             this.RepeatBut.TabIndex = 7;
@@ -145,7 +145,7 @@
             // 
             // VolumeValue
             // 
-            this.VolumeValue.Location = new System.Drawing.Point(661, 289);
+            this.VolumeValue.Location = new System.Drawing.Point(661, 327);
             this.VolumeValue.Maximum = 100;
             this.VolumeValue.Name = "VolumeValue";
             this.VolumeValue.Size = new System.Drawing.Size(104, 45);
@@ -159,7 +159,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Location = new System.Drawing.Point(7, 291);
+            this.label1.Location = new System.Drawing.Point(7, 329);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(51, 15);
             this.label1.TabIndex = 9;
@@ -169,7 +169,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(529, 291);
+            this.label2.Location = new System.Drawing.Point(529, 329);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(51, 15);
             this.label2.TabIndex = 10;
@@ -179,7 +179,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(595, 289);
+            this.label3.Location = new System.Drawing.Point(595, 327);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(60, 16);
             this.label3.TabIndex = 11;
@@ -187,7 +187,7 @@
             // 
             // Previous
             // 
-            this.Previous.Location = new System.Drawing.Point(223, 353);
+            this.Previous.Location = new System.Drawing.Point(223, 391);
             this.Previous.Name = "Previous";
             this.Previous.Size = new System.Drawing.Size(50, 31);
             this.Previous.TabIndex = 13;
@@ -197,7 +197,7 @@
             // 
             // Next
             // 
-            this.Next.Location = new System.Drawing.Point(279, 353);
+            this.Next.Location = new System.Drawing.Point(279, 391);
             this.Next.Name = "Next";
             this.Next.Size = new System.Drawing.Size(50, 31);
             this.Next.TabIndex = 14;
@@ -212,7 +212,7 @@
             // 
             // AudioCover
             // 
-            this.AudioCover.Location = new System.Drawing.Point(12, 12);
+            this.AudioCover.Location = new System.Drawing.Point(136, -1);
             this.AudioCover.Name = "AudioCover";
             this.AudioCover.Size = new System.Drawing.Size(165, 163);
             this.AudioCover.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -222,25 +222,28 @@
             // Song
             // 
             this.Song.AutoSize = true;
-            this.Song.Location = new System.Drawing.Point(9, 188);
+            this.Song.Location = new System.Drawing.Point(9, 174);
+            this.Song.MaximumSize = new System.Drawing.Size(60, 13);
             this.Song.Name = "Song";
             this.Song.Size = new System.Drawing.Size(32, 13);
             this.Song.TabIndex = 16;
             this.Song.Text = "Song";
+            this.Song.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Album
             // 
             this.Album.AutoSize = true;
-            this.Album.Location = new System.Drawing.Point(9, 210);
+            this.Album.Location = new System.Drawing.Point(9, 220);
             this.Album.Name = "Album";
             this.Album.Size = new System.Drawing.Size(36, 13);
             this.Album.TabIndex = 17;
             this.Album.Text = "Album";
+            this.Album.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // Genre
             // 
             this.Genre.AutoSize = true;
-            this.Genre.Location = new System.Drawing.Point(9, 258);
+            this.Genre.Location = new System.Drawing.Point(9, 282);
             this.Genre.Name = "Genre";
             this.Genre.Size = new System.Drawing.Size(36, 13);
             this.Genre.TabIndex = 18;
@@ -249,7 +252,7 @@
             // Composer
             // 
             this.Composer.AutoSize = true;
-            this.Composer.Location = new System.Drawing.Point(9, 235);
+            this.Composer.Location = new System.Drawing.Point(9, 249);
             this.Composer.Name = "Composer";
             this.Composer.Size = new System.Drawing.Size(54, 13);
             this.Composer.TabIndex = 19;
@@ -257,7 +260,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(438, 229);
+            this.SaveButton.Location = new System.Drawing.Point(494, 277);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(86, 23);
             this.SaveButton.TabIndex = 20;
@@ -269,7 +272,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(777, 408);
+            this.ClientSize = new System.Drawing.Size(777, 447);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.Composer);
             this.Controls.Add(this.Genre);

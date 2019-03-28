@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ExampleOfPlayer.Services
 {
@@ -177,20 +178,25 @@ namespace ExampleOfPlayer.Services
         {
             using (var audioFile = TagLib.File.Create(filepath))
             {
-                Title = audioFile.Tag.Title.Trim();
-                Artist = audioFile.Tag.FirstPerformer.Trim();
-                Album = audioFile.Tag.Album.Trim();
+                //  Lyrics = audioFile.Tag.Lyrics;
+
+                Title = string.IsNullOrEmpty(audioFile.Tag.Title) ? Path.GetFileNameWithoutExtension(filepath) : audioFile.Tag.Title.Trim();
+                Album = string.IsNullOrEmpty(audioFile.Tag.Album) ? "Unknown Album" : audioFile.Tag.Album.Trim();
+                //TrackNumber = (int)tag.Tag.Track;
+                Artist = !audioFile.Tag.Performers.Any() ? "Unknown Artist" : string.Join(" & ", audioFile.Tag.Performers);
+                //Year = (int)tag.Tag.Year;
+                //    Genre = audioFile.Tag.FirstGenre;
+                Genre = audioFile.Tag.JoinedGenres;
+                //Bitrate = tag.Properties.AudioBitrate;
                 Duration = audioFile.Properties.Duration;
-                Genre = audioFile.Tag.FirstGenre;
                 Composer = audioFile.Tag.FirstComposer;
                 Source = filepath;
-              //  Lyrics = audioFile.Tag.Lyrics;
 
                 if (audioFile.Tag.Pictures.Length >= 1)
-                {
-                    Picture = audioFile.Tag.Pictures.FirstOrDefault();  //трек имейдж
-                }
-            }
+                    {
+                        Picture = audioFile.Tag.Pictures.FirstOrDefault();  //трек имейдж
+                    }
+                }  
 
        //         var audio = new Audio();
        //     audio.Id = this.Id;
@@ -206,14 +212,31 @@ namespace ExampleOfPlayer.Services
         {
             using (var audioFile = TagLib.File.Create(filepath))
             {
-                Title = audioFile.Tag.Title;
-                Artist = audioFile.Tag.FirstPerformer;
-                Album = audioFile.Tag.Album;
+                //Title = audioFile.Tag.Title;
+                //Artist = audioFile.Tag.FirstPerformer;
+                //Album = audioFile.Tag.Album;
+                //Duration = audioFile.Properties.Duration;
+                //Genre = audioFile.Tag.FirstGenre;
+                //Composer = audioFile.Tag.FirstComposer;
+                //Source = filepath;
+                ////  Lyrics = audioFile.Tag.Lyrics;
+
+                //if (audioFile.Tag.Pictures.Length >= 1)
+                //{
+                //    Picture = audioFile.Tag.Pictures.FirstOrDefault();  //трек имейдж
+                //}
+
+                Title = string.IsNullOrEmpty(audioFile.Tag.Title) ? Path.GetFileNameWithoutExtension(filepath) : audioFile.Tag.Title.Trim();
+                Album = string.IsNullOrEmpty(audioFile.Tag.Album) ? "Unknown Album" : audioFile.Tag.Album.Trim();
+                //TrackNumber = (int)tag.Tag.Track;
+                Artist = !audioFile.Tag.Performers.Any() ? "Unknown Artist" : string.Join(" & ", audioFile.Tag.Performers);
+                //Year = (int)tag.Tag.Year;
+                //    Genre = audioFile.Tag.FirstGenre;
+                Genre = audioFile.Tag.JoinedGenres;
+                //Bitrate = tag.Properties.AudioBitrate;
                 Duration = audioFile.Properties.Duration;
-                Genre = audioFile.Tag.FirstGenre;
                 Composer = audioFile.Tag.FirstComposer;
                 Source = filepath;
-                //  Lyrics = audioFile.Tag.Lyrics;
 
                 if (audioFile.Tag.Pictures.Length >= 1)
                 {

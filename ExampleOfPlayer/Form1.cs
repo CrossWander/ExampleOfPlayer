@@ -16,139 +16,93 @@ namespace ExampleOfPlayer
         public Form1()
         {
             InitializeComponent();
-            if (_basicplayer == null)
-            {
-                switch (Properties.Settings.Default.AudioLibrary)
-                {
-                    case (int)MediaEngine.Wmp:
-                        _basicplayer = new WinMediaPlayer();
-                        break;
-                    case (int)MediaEngine.NAudio:
-                        _basicplayer = new NAudioMediaPlayer();
-                        break;
-                    case (int)MediaEngine.CSCore:
-                        _basicplayer = new CSCoreMediaPlayer();
-                        break;
-                    case (int)MediaEngine.Bass:
-                        _basicplayer = new BassMediaPlayer();
-                        break;
-
-                }
-                /*   _basicplayer = Properties.Settings.Default.AudioLibrary == (int)MediaEngine.Wmp
-                       ? (BasicPlayerFunction)new WinMediaPlayer()
-                       : Properties.Settings.Default.AudioLibrary == (int)MediaEngine.NAudio 
-                       ? new NAudioMediaPlayer()
-                       : Properties.Settings.Default.AudioLibrary == (int)MediaEngine.CSCore 
-                       ? new CSCoreMediaPlayer(): new BassMediaPlayer(); */
-            }
-
-            AudioPlayerFunction.Load();
-        //    foreach (var _audio in AudioPlayerFunction.Playlist)
-        //        MessageBox.Show(_audio.Artist + " - " + _audio.Title); //пусто
-              //  PlayList.Items.Add(_audio.Artist + " - " + _audio.Title);
+       //&     AudioPlayerFunction.Load();
 
         }
 
         private static BasicPlayerFunction _basicplayer;
         private static FadeOutFunction _fade = new FadeOutFunction();
-        //private static AudioPlayerFunction _AudioService = new AudioPlayerFunction();
         public List<string> filepath = new List<string>();
         private Audio _audio = new Audio();
 
         private void Browse_Click(object sender, EventArgs e)
         {
             OpenFileDialog open = new OpenFileDialog { Multiselect = true, Title = "Выберите музыку" };
-            open.Filter = "Audio files (*.wav; *.mp3)| *.wav; *.mp3;";
+            open.Filter = "Audio files | *.wav; *.mp3; *.flac; *.ac3; *.aac; *.wma";    //*.opus; *.m4a;";
             if (open.ShowDialog() != DialogResult.OK) return;
 
             if (open.FileName == String.Empty)
                 return;
             foreach (string fname in open.FileNames)
             {
-                // PlayList.Items.Add(System.IO.Path.GetFileNameWithoutExtension(fname));
                 filepath.Add(fname);
                 _audio.AudioTags(fname);
                 PlayList.Items.Add(_audio.Artist + " - " + _audio.Title);
-                //  _AudioService.AudioPath(fname);
             }
 
             AudioPlayerFunction.AudioPath = filepath;
-
-            /*      if (PlayList.Items.Count<0)    //эту проверку нужно будет вызывать...реализовать в классе, чтобы работало
-                      //воспроизведение сразу после переноса песен в лейлист мышкой, а не про browse
-                      PlayList.SetSelected(0, true);*/
         }
 
         private async void Playbutton_Click(object sender, EventArgs e)
         {
-            int i;
-            // сделать проверки - если список не пуст, то если не выбран элемент(селектиндекс равен -1) то проиграть 1й
-            // элемент в списке, иначе проиграть выбранный, если играет песня - ничего не делать
-            // AudioPlayerFunction - должен принимать индекс выбранной песни в списке
             if (PlayList.Items.Count != 0)
             {
                 if (PlayList.SelectedIndex != -1)
                 {
-                    i = PlayList.SelectedIndex;
-                    _basicplayer.Source = filepath[i];
                     AudioPlayerFunction.CurrentAudio = AudioPlayerFunction._playlist[PlayList.SelectedIndex];
                 }
                 else
-                {                    
-                    i = PlayList.SelectedIndex = 0;
-                    AudioPlayerFunction.CurrentAudio = AudioPlayerFunction._playlist[PlayList.SelectedIndex];
-                    _basicplayer.Source = filepath[i];
-                }
-
-                _basicplayer.Initialize();
-                _basicplayer.Volume = 100;
-                _basicplayer.Play();
-
-                try
                 {
-                    _audio.AudioTags(filepath[i]);
-                    Song.Text = "Song: " + _audio.Title;
-                    Album.Text = "Album: " + _audio.Album;
-                    Genre.Text = "Genre: " + _audio.Genre;
-                    Composer.Text = "Composer: " + _audio.Composer;
-                    // richTextBox1.Text = _audio.Lyrics;
-                    if (Image.FromStream(new MemoryStream((byte[])_audio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero) == null)
-                        return;
-                    else
-                        AudioCover.Image = Image.FromStream(new MemoryStream((byte[])_audio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero);
+                    PlayList.SelectedIndex = 0;
+                    AudioPlayerFunction.CurrentAudio = AudioPlayerFunction._playlist[PlayList.SelectedIndex];
                 }
-                catch (Exception ex) { }//                MessageBox.Show(ex.ToString()); }
-
-
-                // await _fade.FadeIn(100, _basicplayer);
-                // await _fade.FadeIn2(2000, _basicplayer);
-                label1.Text = _basicplayer.Position.Hours.ToString("00") + ":" +
-                    _basicplayer.Position.Minutes.ToString("00") + ":" +
-                    _basicplayer.Position.Seconds.ToString("00");
-                label2.Text = _basicplayer.Duration.Hours.ToString("00") + ":" +
-                    _basicplayer.Duration.Minutes.ToString("00") + ":" +
-                    _basicplayer.Duration.Seconds.ToString("00");
-                TimePosition.Maximum = (int)_basicplayer.Duration.TotalSeconds;
-                TimePosition.Value = (int)_basicplayer.Position.TotalSeconds;
-                Tickstimer.Enabled = true;
             }
-            else return;
+            AudioPlayerFunction.Play(AudioPlayerFunction.CurrentAudio);
+            AudioPlayerFunction.Volume = VolumeValue.Value;
+
+
+            try
+            {
+                Song.MaximumSize = new Size(300, 50);
+                Song.Text = "Song: " + AudioPlayerFunction.CurrentAudio.Title;
+                Album.Text = "Album: " + AudioPlayerFunction.CurrentAudio.Album;
+                Genre.Text = "Genre: " + AudioPlayerFunction.CurrentAudio.Genre;
+                Composer.Text = "Composer: " + AudioPlayerFunction.CurrentAudio.Composer;
+                // richTextBox1.Text = _audio.Lyrics;
+                if (Image.FromStream(new MemoryStream((byte[])AudioPlayerFunction.CurrentAudio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero) == null)
+                    return;
+                else
+                    AudioCover.Image = Image.FromStream(new MemoryStream((byte[])AudioPlayerFunction.CurrentAudio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero);
+            }
+            catch (Exception ex) { } // MessageBox.Show(ex.ToString()); }
+
+
+            // await _fade.FadeIn(100, _basicplayer);
+            // await _fade.FadeIn2(2000, _basicplayer);
+            label1.Text = AudioPlayerFunction.CurrentAudioPosition.Hours.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Minutes.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Seconds.ToString("00");
+            label2.Text = AudioPlayerFunction.CurrentAudioDuration.Hours.ToString("0") + ":" +
+                AudioPlayerFunction.CurrentAudioDuration.Minutes.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioDuration.Seconds.ToString("00");
+            TimePosition.Maximum = (int)AudioPlayerFunction.CurrentAudioDuration.TotalSeconds;
+            TimePosition.Value = (int)AudioPlayerFunction.CurrentAudioPosition.TotalSeconds;
+            Tickstimer.Enabled = true;
         }
 
         private void Pausebutton_Click(object sender, EventArgs e)
         {
-            if (PlayList.Items.Count != 0)               
-                _basicplayer.Pause();
+            AudioPlayerFunction.Pause();
         }
 
 
-        private async void Stopbutton_Click(object sender, EventArgs e)
+        private void Stopbutton_Click(object sender, EventArgs e)
         {
             if (PlayList.Items.Count != 0)
             {
-                await _fade.FadeOut(760, _basicplayer);
+                //await _fade.FadeOut(760, _basicplayer);
                 //  await _fade.FadeOut2(50, _basicplayer);
-                //  _basicplayer.Stop();
+                AudioPlayerFunction.Stop();
                 label1.Text = "00:00:00";
                 label2.Text = "00:00:00";
                 TimePosition.Value = 0;
@@ -157,56 +111,48 @@ namespace ExampleOfPlayer
         }
         private void Previous_Click(object sender, EventArgs e)
         {
-            if (PlayList.Items.Count != 0)
-            { }
+            AudioPlayerFunction.Previous();
         }
 
         private void Next_Click(object sender, EventArgs e)
         {
-            if (PlayList.Items.Count != 0)
-            { }
+            AudioPlayerFunction.SwitchNext();
         }
 
         private void PlayList_DoubleClick(object sender, EventArgs e)
         {
-            if (PlayList.SelectedIndex != -1)
+
+            AudioPlayerFunction.CurrentAudio = AudioPlayerFunction._playlist[PlayList.SelectedIndex];
+            AudioPlayerFunction.Volume = VolumeValue.Value;
+            AudioPlayerFunction.Play(AudioPlayerFunction.CurrentAudio);
+
+
+            try
             {
-                _basicplayer.Dispose();
-                int i = PlayList.SelectedIndex;
-                _basicplayer.Source = filepath[i];
-                _basicplayer.Initialize();
-                _basicplayer.Volume = 100;                
-                _basicplayer.Play();
-
-                try
-                {
-                    _audio.AudioTags(filepath[i]);
-                    Song.Text = "Song: " + _audio.Title;
-                    Album.Text = "Album: " + _audio.Album;
-                    Genre.Text = "Genre: " + _audio.Genre;
-                    Composer.Text = "Composer: " + _audio.Composer;
-                    // richTextBox1.Text = _audio.Lyrics;
-                    if (Image.FromStream(new MemoryStream((byte[])_audio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero) == null)
-                        AudioCover.Image = null;
-                    //return;
-                    else
-                        AudioCover.Image = Image.FromStream(new MemoryStream((byte[])_audio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero);
-                }
-                catch (Exception ex) { /* MessageBox.Show(ex.ToString());*/ }
-
-
-                //костылек - потом убрать
-                label1.Text = _basicplayer.Position.Hours.ToString("00") + ":" +
-                    _basicplayer.Position.Minutes.ToString("00") + ":" +
-                    _basicplayer.Position.Seconds.ToString("00");
-                label2.Text = _basicplayer.Duration.Hours.ToString("00") + ":" +
-                    _basicplayer.Duration.Minutes.ToString("00") + ":" +
-                    _basicplayer.Duration.Seconds.ToString("00");
-                TimePosition.Maximum = (int)_basicplayer.Duration.TotalSeconds;
-                TimePosition.Value = (int)_basicplayer.Position.TotalSeconds;
-                Tickstimer.Enabled = true;
+                Song.Text = "Song: " + AudioPlayerFunction.CurrentAudio.Title;
+                Album.Text = "Album: " + AudioPlayerFunction.CurrentAudio.Album;
+                Genre.Text = "Genre: " + AudioPlayerFunction.CurrentAudio.Genre;
+                Composer.Text = "Composer: " + AudioPlayerFunction.CurrentAudio.Composer;
+                // richTextBox1.Text = _audio.Lyrics;
+                if (Image.FromStream(new MemoryStream((byte[])AudioPlayerFunction.CurrentAudio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero) == null)
+                    return;
+                else
+                    AudioCover.Image = Image.FromStream(new MemoryStream((byte[])AudioPlayerFunction.CurrentAudio.Picture.Data.Data)).GetThumbnailImage(100, 100, null, IntPtr.Zero);
             }
-            else return;
+            catch (Exception ex) { } //MessageBox.Show(ex.ToString()); }
+
+
+            // await _fade.FadeIn(100, _basicplayer);
+            // await _fade.FadeIn2(2000, _basicplayer);
+            label1.Text = AudioPlayerFunction.CurrentAudioPosition.Hours.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Minutes.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Seconds.ToString("00");
+            label2.Text = AudioPlayerFunction.CurrentAudioDuration.Hours.ToString("0") + ":" +
+                AudioPlayerFunction.CurrentAudioDuration.Minutes.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioDuration.Seconds.ToString("00");
+            TimePosition.Maximum = (int)AudioPlayerFunction.CurrentAudioDuration.TotalSeconds;
+            TimePosition.Value = (int)AudioPlayerFunction.CurrentAudioPosition.TotalSeconds;
+            Tickstimer.Enabled = true;
         }
 
         private void PlayList_DragEnter(object sender, DragEventArgs e)
@@ -215,7 +161,7 @@ namespace ExampleOfPlayer
                 DragDropEffects.All : DragDropEffects.None;
         }
 
-        private void PlayList_DragDrop(object sender, DragEventArgs e)
+        private void PlayList_DragDrop(object sender, DragEventArgs e) 
         {
             var dropped = ((string[])e.Data.GetData(DataFormats.FileDrop));
             var files = dropped.ToList();
@@ -228,17 +174,19 @@ namespace ExampleOfPlayer
                 {
                     files.AddRange(Directory.GetFiles(drop, "*.mp3", SearchOption.AllDirectories));
                     files.AddRange(Directory.GetFiles(drop, "*.wav", SearchOption.AllDirectories));
+                   // *.wav; *.mp3; *.flac; *.ac3; *.aac; *.wma"; добавить
                 }
 
             foreach (string file in files)
             {
                 if ((file.ToLower().EndsWith(".mp3")) || (file.ToLower().EndsWith(".wav")))
                 {
-                    PlayList.Items.Add(Path.GetFileNameWithoutExtension(file));
                     filepath.Add(file);
+                    _audio.AudioTags(file);
+                    PlayList.Items.Add(_audio.Artist + " - " + _audio.Title);
                 }
             }
-
+            AudioPlayerFunction.AudioPath = filepath;
         }
 
         private void Settings_Click(object sender, EventArgs e)
@@ -261,25 +209,24 @@ namespace ExampleOfPlayer
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-           // _AudioService.Repeat = false;
-           // _basicplayer.Dispose();
+            AudioPlayerFunction.Dispose();
         }
 
         private void Tickstimer_Tick(object sender, EventArgs e)
         {
-            label1.Text = _basicplayer.Position.Hours.ToString("00") + ":" +
-                _basicplayer.Position.Minutes.ToString("00") + ":" +
-                _basicplayer.Position.Seconds.ToString("00");
+            label1.Text = AudioPlayerFunction.CurrentAudioPosition.Hours.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Minutes.ToString("00") + ":" +
+                AudioPlayerFunction.CurrentAudioPosition.Seconds.ToString("00");
 
-            TimePosition.Value = (int)_basicplayer.Position.TotalSeconds;
+            TimePosition.Value = (int)AudioPlayerFunction.CurrentAudioPosition.TotalSeconds;
         }
 
         private void VolumeValue_Scroll(object sender, EventArgs e)
         {
-            _basicplayer.Volume = VolumeValue.Value;
+            AudioPlayerFunction.Volume = VolumeValue.Value;
             label3.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Bold);
             label3.ForeColor = Color.Black;
-            if (_basicplayer.Volume == 0)
+            if (AudioPlayerFunction.Volume == 0)
             {
                 label3.Font = new Font("Microsoft Sans Serif", 9.75f, FontStyle.Strikeout | FontStyle.Bold);
                 label3.ForeColor = Color.Red;
@@ -313,10 +260,10 @@ namespace ExampleOfPlayer
                 if (position > TimePosition.Maximum - 1) position = TimePosition.Maximum;
                 if (position < 0) position = TimePosition.Minimum;
                 TimePosition.Value = position;
-                _basicplayer.Position = TimeSpan.FromSeconds(TimePosition.Value);
-                label1.Text = _basicplayer.Position.Hours.ToString("00") + ":" +
-                    _basicplayer.Position.Minutes.ToString("00") + ":" +
-                    _basicplayer.Position.Seconds.ToString("00");
+                AudioPlayerFunction.CurrentAudioPosition = TimeSpan.FromSeconds(TimePosition.Value);
+                label1.Text = AudioPlayerFunction.CurrentAudioPosition.Hours.ToString("00") + ":" +
+                    AudioPlayerFunction.CurrentAudioPosition.Minutes.ToString("00") + ":" +
+                    AudioPlayerFunction.CurrentAudioPosition.Seconds.ToString("00");
                 Tickstimer.Enabled = true;
             }
         }

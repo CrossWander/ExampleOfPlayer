@@ -21,10 +21,6 @@ namespace ExampleOfPlayer.Audio_lib
     public abstract class BasicPlayerFunction : IDisposable
     {
         //fields
-        /*    public abstract TimeSpan Position { get; set; }
-            public abstract TimeSpan Duration { get; }
-            public abstract Uri Source { get; set; }
-            public abstract double Volume { get; set; }*/
         public abstract string Source { get; set; }
         public abstract double Volume { get; set; }
         public abstract TimeSpan Position { get; set; }

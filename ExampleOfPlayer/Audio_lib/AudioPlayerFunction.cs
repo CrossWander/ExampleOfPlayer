@@ -20,11 +20,9 @@ namespace ExampleOfPlayer.Audio_lib
         private static BasicPlayerFunction _basicplayer;
         private static readonly System.Timers.Timer _positionTimer;
         private static Audio _currentAudio;
-        ///private static IList<Audio> _originalPlaylist;
-        public static List<Audio> _playlist;// = new List<Audio>();
+        public static List<Audio> _playlist = new List<Audio>();
         private static int _playFailsCount;
         private static PlayerPlayState _state;
-        ///private static string _curAudio, _prevAudio, _nextAudio; //треки - текущий, следующий, прошлый
         private static CancellationTokenSource _cancellationToken = new CancellationTokenSource();
         private static FadeOutFunction _fade = new FadeOutFunction();
 
@@ -58,7 +56,6 @@ namespace ExampleOfPlayer.Audio_lib
                         ? new NAudioMediaPlayer()
                         : Properties.Settings.Default.AudioLibrary == (int)MediaEngine.CSCore 
                         ? new CSCoreMediaPlayer(): new BassMediaPlayer(); */
-
 
                     _basicplayer.Initialize();
                     _basicplayer.MediaEnded += MediaPlayerOnMediaEnded;
@@ -100,20 +97,7 @@ namespace ExampleOfPlayer.Audio_lib
         public static List<Audio> Playlist
         {
             get { return _playlist; }
-            set
-            {
-                /*if (Shuffle)
-                {
-                    _originalPlaylist = value.ToList(); //save original playlist
-                    _playlist = value;
-                    _playlist.Shuffle();
-                }*/
-              //  else
-             //   {
-             //       _originalPlaylist = value;
-                    _playlist = value;
-             //   }
-            }
+            set { _playlist = value; }
         }
 
         public static Audio CurrentAudio
@@ -126,7 +110,6 @@ namespace ExampleOfPlayer.Audio_lib
             {
                 var old = _currentAudio;
                 _currentAudio = value;
-               // MessageBox.Show(_currentAudio.Source);
             }
         }
 
@@ -146,17 +129,15 @@ namespace ExampleOfPlayer.Audio_lib
         /// <param name="_audio"></param>
         public static void SetPlaylist(List<string> _audio)
         {
-            //_playlist = new List<Audio>();
             try
             {
                 foreach (var s in _audio)
                 {
-                    Playlist.Add(new Audio(s));
+                   // Playlist.Add(new Audio(s));
+                    _playlist.Add(new Audio(s));
                 }
             }
             catch (Exception ex) { MessageBox.Show(ex.ToString()); }
-          //  foreach (var s in _playlist)
-          //      MessageBox.Show(s.Source);
         }
 
         public static bool Repeat
@@ -208,7 +189,7 @@ namespace ExampleOfPlayer.Audio_lib
                 if (Settings.Default.Volume == value)
                     return;
 
-                Settings.Default.Volume = Clamp(value, 0f, 100f); //проверяет входит ли число в указ диапазон, если нет ставит макс или мин
+                Settings.Default.Volume = value.Clamp(0f, 100f); //проверяет входит ли число в указ диапазон, если нет ставит макс или мин
                 MediaPlayer.Volume = Settings.Default.Volume;
             }
         }
@@ -241,7 +222,6 @@ namespace ExampleOfPlayer.Audio_lib
             catch (Exception ex) { }
         }
 
-        //просмотреть, переделать
         public static void Play(Audio track)
         {
             CancelAsync();
@@ -250,14 +230,21 @@ namespace ExampleOfPlayer.Audio_lib
 
         public static async void PlayInternal(Audio track, CancellationToken token)
         {
-            //сделать получение песен через класс аудио
+            //if (track.IsPlaying) return;
+            if (State == PlayerPlayState.Paused)
+            {
+                CurrentAudio.IsPlaying = true;
+                State = PlayerPlayState.Playing;
+                MediaPlayer.Play();
+                return;
+            }
             if (CurrentAudio != null)
             {
                 CurrentAudio.IsPlaying = false;
                 Stop();
             }
             track.IsPlaying = true;
-            //должен получать индекс файла или сам файл
+
             CurrentAudio = track;
 
             if (track.Source == null)
@@ -270,11 +257,9 @@ namespace ExampleOfPlayer.Audio_lib
 
             //track.IsPlaying = true;
             
-         /*   var url = track.Source;
-            if (!Settings.Instance.UseHttps)
-                url = url.Replace("https://", "http://");*/
 
-            MediaPlayer.Source = track.Source; //new Uri(url);
+            MediaPlayer.Source = track.Source;
+            MediaPlayer.Initialize(); 
             MediaPlayer.Play();
 
             State = PlayerPlayState.Playing;
@@ -295,7 +280,7 @@ namespace ExampleOfPlayer.Audio_lib
         /// <summary>
         /// следующая песня по нажатию кнопки
         /// </summary>
-        private static void SwitchNext()
+        public static void SwitchNext()
         {
             NextSong(true);         
         }
@@ -304,12 +289,11 @@ namespace ExampleOfPlayer.Audio_lib
         /// следующая песня в автоматическом режиме, после окончания предыдущей
         /// </summary>
         /// <param name="invokedByUser"></param>
-        public static void NextSong(bool invokedByUser = false)
+        private static void NextSong(bool invokedByUser = false)
         {
             if (Repeat && !invokedByUser)
             {
                 Play(CurrentAudio);
-                //NotifyAudioChanged(CurrentAudio); //to scrobble repeating track
                 return;
             }
 
@@ -319,12 +303,12 @@ namespace ExampleOfPlayer.Audio_lib
                 if (_currentAudio != null)
                 {
                     currentIndex = _playlist.IndexOf(_currentAudio);
-                    /*     if (currentIndex == -1)
-                         {
-                             var current = _playlist.FirstOrDefault(a => a.Id == _currentAudio.Id);
-                             if (current != null)
-                                 currentIndex = _playlist.IndexOf(current);
-                         }*/
+                    if (currentIndex == -1)
+                    {
+                        var current = _playlist.FirstOrDefault(a => a.Source == _currentAudio.Source);
+                        if (current != null)
+                            currentIndex = _playlist.IndexOf(current);
+                    }
                 }
 
                 currentIndex++;
@@ -346,26 +330,55 @@ namespace ExampleOfPlayer.Audio_lib
             if (CurrentAudioPosition.TotalSeconds > 3)
             {
                 CurrentAudioPosition = TimeSpan.Zero;
+                MediaPlayer.Play();
                 return;
             }
+            if (_playlist != null)
+            {
+                int currentIndex = -1;
+                if (_currentAudio != null)
+                {
+                    currentIndex = _playlist.IndexOf(_currentAudio);
+                    if (currentIndex == -1)
+                    {
+                        var current = _playlist.FirstOrDefault(a => a.Source == _currentAudio.Source);
+                        if (current != null)
+                            currentIndex = _playlist.IndexOf(current);
+                    }
+                }
+                if (currentIndex > 0)
+                {
+                    currentIndex--;
+
+                    if (currentIndex >= 0)
+                        Play(_playlist[currentIndex]);
+                }
+                else
+                {
+                    currentIndex = _playlist.Count -1;
+
+                    if (currentIndex < _playlist.Count)
+                        Play(_playlist[currentIndex]);
+                }
+            }
+            
 
         }
 
         public static void Pause()
         {
             MediaPlayer.Pause();
-
             State = PlayerPlayState.Paused;
         }
 
         public static async void Stop()
         {
-            CurrentAudioPosition = TimeSpan.Zero;
-            await _fade.FadeOut(760, _basicplayer);
-           // MediaPlayer.Stop();
-
+            //await _fade.FadeOut(760, _basicplayer);
+            MediaPlayer.Stop();
+            CurrentAudioPosition = TimeSpan.Zero;                 
             State = PlayerPlayState.Stopped;
         }
+
 
         /// <summary>
         /// ззагрузка плейлиста
